@@ -5,5 +5,17 @@
 
 CXX?=g++
 
-simple_test: simple_test.cpp
-	$(CXX) -std=c++14 -I../include simple_test.cpp -o $@
+BTRIO_INCL?= ../include
+
+HEADERS= \
+	$(BTRIO_INCL)/put.hpp \
+	$(BTRIO_INCL)/btrio.hpp
+
+TARGETS=\
+		simple_test
+
+simple_test: simple_test.cpp $(HEADERS)
+	$(CXX) -std=c++14 -I$(BTRIO_INCL) simple_test.cpp -o $@
+
+clean:
+	rm -rf $(TARGETS)

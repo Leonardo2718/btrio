@@ -8,68 +8,34 @@
 #ifndef BTRIO_HPP
 #define BTRIO_HPP
 
+#include "put.hpp"
+
 #include <cstdio>
-#include <cstdlib>
-#include <memory>
+#include <utility>
 
 namespace btrio {
 
-template <typename T>
-void put(T arg);
-
-template <>
-void put(int arg) {
-    char buf[16];
-
-    bool neg = arg < 0;
-    if (neg) arg = -arg;
-
-    int i = 0;
-    do {
-        auto d = arg % 10;
-        buf[i] = '0' + d;
-        arg /= 10;
-        ++i;
-    } while (arg && i < sizeof(buf));
-
-    if (neg) {
-        std::putchar('-');
-    }
-
-    do {
-        --i;
-        std::putchar(buf[i]);
-    } while (i);
-}
-
-template <>
-void put(unsigned int arg) {
-    char buf[16];
-
-    int i = 0;
-    do {
-        auto d = arg % 10;
-        buf[i] = '0' + d;
-        arg /= 10;
-        ++i;
-    } while (arg && i < sizeof(buf));
-
-    do {
-        --i;
-        std::putchar(buf[i]);
-    } while (i);
-}
-
 template <typename InputIterator, typename T, typename... Ts>
-void iprintf(InputIterator begin, InputIterator end, T arg, Ts... args);
+void ifprintf(FILE* f, InputIterator begin, InputIterator end, T arg, Ts... args);
 
 template <typename InputIterator>
-void iprintf(InputIterator begin, InputIterator end);
+void ifprintf(FILE* f, InputIterator begin, InputIterator end);
+
+template <typename InputIterator, typename... Ts>
+void iprintf(InputIterator begin, InputIterator end, Ts... args) {
+    ifprintf(stdout, begin, end, args...);
+}
+
+template <typename InputRange, typename... Ts>
+void printf(InputRange r, Ts&&... args) { iprintf(std::cbegin(r), std::cend(r), args...); }
+
+template <typename... Ts>
+void printf(const char* str, Ts&&... args) { printf(std::string{str}, args...); }
 
 }
 
 template <typename InputIterator, typename T, typename... Ts>
-void btrio::iprintf(InputIterator begin, InputIterator end, T arg, Ts... args) {
+void btrio::ifprintf(FILE* f, InputIterator begin, InputIterator end, T arg, Ts... args) {
     auto cursor = begin;
 
     while (cursor != end) {
@@ -81,12 +47,12 @@ void btrio::iprintf(InputIterator begin, InputIterator end, T arg, Ts... args) {
                 break;
             }
             else {
-                std::putchar('%');
-                std::putchar(*cursor);
+                std::putc('%', f);
+                std::putc(*cursor, f);
             }
         }
         else {
-            std::putchar(*cursor);
+            std::putc(*cursor, f);
         }
         ++cursor;
     }
@@ -95,9 +61,9 @@ void btrio::iprintf(InputIterator begin, InputIterator end, T arg, Ts... args) {
 }
 
 template <typename InputIterator>
-void btrio::iprintf(InputIterator begin, InputIterator end) {
+void btrio::ifprintf(FILE* f, InputIterator begin, InputIterator end) {
     for (auto cursor = begin; cursor != end; ++cursor) {
-        std::putchar(*cursor);
+        std::putc(*cursor, f);
     }
 }
 

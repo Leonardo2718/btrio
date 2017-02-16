@@ -5,11 +5,21 @@
  *          http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#include "btrio.hpp"
-
 #include <string>
 
+#include "btrio.hpp"
+
 int main() {
-    auto s = std::string{"Hello World! %_ %_\n"};
-    btrio::iprintf(s.cbegin(), s.cend(), -10, 13);
+    btrio::printf("Hello World!\n");
+
+    btrio::printf("Too few arguments: %_ %_\n", -10);
+
+    btrio::printf("Too many arguments: %_ %_\n", -10, 13, 15);
+
+    btrio::printf("A string \"%_\"\n", "inside a string");
+
+    btrio::printf("A percent at the end of a string %");
+    btrio::printf(" ... works!\n");
+
+    btrio::printf("%_ is a pointer\n", reinterpret_cast<void*>(0xabcd));
 }
