@@ -8,7 +8,9 @@ CXX?=g++
 BTRIO_INCL?= ../include
 
 HEADERS= \
+	$(BTRIO_INCL)/format.hpp \
 	$(BTRIO_INCL)/put.hpp \
+	$(BTRIO_INCL)/print.hpp \
 	$(BTRIO_INCL)/btrio.hpp
 
 TARGETS=\
