@@ -15,7 +15,7 @@ TARGETS=\
 		simple_test
 
 simple_test: simple_test.cpp $(HEADERS)
-	$(CXX) -std=c++14 -I$(BTRIO_INCL) simple_test.cpp -o $@
+	$(CXX) -std=c++14 -g -I$(BTRIO_INCL) simple_test.cpp -o $@
 
 clean:
 	rm -rf $(TARGETS)

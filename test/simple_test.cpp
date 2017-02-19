@@ -7,6 +7,7 @@
 
 #include <string>
 
+#include "format.hpp"
 #include "btrio.hpp"
 
 int main() {
@@ -22,4 +23,9 @@ int main() {
     btrio::printf(" ... works!\n");
 
     btrio::printf("%_ is a pointer\n", reinterpret_cast<void*>(0xabcd));
+
+    btrio::print_format(btrio::df{});
+
+    using f = btrio::df::radix<5>::decc<15>;
+    btrio::print_format<f>();
 }

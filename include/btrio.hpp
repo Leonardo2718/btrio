@@ -8,6 +8,7 @@
 #ifndef BTRIO_HPP
 #define BTRIO_HPP
 
+#include "format.hpp"
 #include "put.hpp"
 
 #include <cstdio>
@@ -27,10 +28,24 @@ void iprintf(InputIterator begin, InputIterator end, Ts... args) {
 }
 
 template <typename InputRange, typename... Ts>
-void printf(InputRange r, Ts&&... args) { iprintf(std::cbegin(r), std::cend(r), args...); }
+void printf(InputRange r, Ts&&... args) {
+    iprintf(std::cbegin(r), std::cend(r), args...);
+}
 
 template <typename... Ts>
-void printf(const char* str, Ts&&... args) { printf(std::string{str}, args...); }
+void printf(const char* str, Ts&&... args) {
+    printf(std::string{str}, args...);
+}
+
+template <typename F>
+void print_format() {
+    btrio::printf("radix = %_, decimals = %_\n", F::get_radix(), F::get_decimals());
+}
+
+FORMAT_TEMPLATE
+void print_format(btrio::static_format<FORMAT_ARGS> f) {
+    btrio::printf("radix = %_, decimals = %_\n", _radix, _decimals);
+}
 
 }
 
