@@ -30,7 +30,10 @@ template <typename F, typename T> struct formatted_value;
 
 FORMAT_TEMPLATE
 struct btrio::static_format {
-        static_assert(2 <= _radix && _radix <= 16, "Radix is outside the supported range [2,16].");
+        static constexpr unsigned int min_radix = 2;
+        static constexpr unsigned int max_radix = 16;
+
+        static_assert(min_radix <= _radix && _radix <= max_radix, "Radix is outside the supported range [2,16].");
 
         static constexpr auto get_radix() { return _radix; }
         static constexpr auto get_decimals() { return _decimals; }

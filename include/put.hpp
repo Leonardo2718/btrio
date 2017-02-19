@@ -14,7 +14,7 @@
 
 namespace btrio {
 
-static const char char_map[] = {
+static const char char_map[btrio::df::max_radix] = {
     '0',
     '1',
     '2',
