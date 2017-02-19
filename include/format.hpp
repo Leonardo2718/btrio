@@ -24,11 +24,13 @@ FORMAT_DEFAULT_TEMPLATE struct static_format;
 
 using df = static_format<>;
 
+template <typename F, typename T> struct formatted_value;
+
 }
 
 FORMAT_TEMPLATE
 struct btrio::static_format {
-        static_assert(_radix >= 2 && _radix <= 16, "Radix is outside the supported range [2,16].");
+        static_assert(2 <= _radix && _radix <= 16, "Radix is outside the supported range [2,16].");
 
         static constexpr auto get_radix() { return _radix; }
         static constexpr auto get_decimals() { return _decimals; }
@@ -53,6 +55,16 @@ struct btrio::static_format {
 
         template <char c>
         using fill = static_format<_radix, _decimals, _minw, _maxw, c>;
+
+        using _this = static_format<FORMAT_ARGS>;
+
+        template <typename T>
+        static auto format(T val) { return formatted_value<_this, T>{val}; }
+};
+
+template <typename F, typename T> struct btrio::formatted_value {
+        using format = F;
+        T value;
 };
 
 #endif // FORMAT_HPP

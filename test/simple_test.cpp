@@ -28,4 +28,8 @@ int main() {
 
     using f = btrio::df::radix<5>::decimals<15>;
     btrio::print_format<f>();
+
+    auto fval = btrio::df::radix<8>::maxw<12>::format(1);
+    btrio::printf("%_\n", fval.value);
+    btrio::print_format<decltype(fval)::format>();
 }

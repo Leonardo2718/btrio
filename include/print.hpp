@@ -55,7 +55,7 @@ void btrio::ifprintf(FILE* f, InputIterator begin, InputIterator end, T arg, Ts.
                 break;
             }
             else if (*cursor == '_') {
-                put(arg);
+                put(arg, f);
                 ++cursor;
                 break;
             }
