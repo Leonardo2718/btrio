@@ -56,7 +56,11 @@ void btrio::ifprintf(FILE* f, InputIterator begin, InputIterator end, T arg, Ts.
     while (cursor != end) {
         if (*cursor == '%') {
             ++cursor;
-            if (*cursor == '_') {
+            if (cursor == end) {
+                std::putc('%', f);
+                break;
+            }
+            else if (*cursor == '_') {
                 put(arg);
                 ++cursor;
                 break;

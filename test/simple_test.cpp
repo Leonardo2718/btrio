@@ -19,7 +19,7 @@ int main() {
 
     btrio::printf("A string \"%_\"\n", "inside a string");
 
-    btrio::printf("A percent at the end of a string %");
+    btrio::printf("A percent at the end of a string %", 2);
     btrio::printf(" ... works!\n");
 
     btrio::printf("%_ is a pointer\n", reinterpret_cast<void*>(0xabcd));
