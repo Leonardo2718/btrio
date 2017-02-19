@@ -37,15 +37,9 @@ void printf(const char* str, Ts&&... args) {
     printf(std::string{str}, args...);
 }
 
-template <typename F>
-void print_format() {
-    btrio::printf("radix = %_, decimals = %_\n", F::get_radix(), F::get_decimals());
-}
+template <typename F> void print_format();
 
-FORMAT_TEMPLATE
-void print_format(btrio::static_format<FORMAT_ARGS> f) {
-    btrio::printf("radix = %_, decimals = %_\n", _radix, _decimals);
-}
+FORMAT_TEMPLATE void print_format(btrio::static_format<FORMAT_ARGS>);
 
 }
 
@@ -84,6 +78,28 @@ void btrio::ifprintf(FILE* f, InputIterator begin, InputIterator end) {
     for (auto cursor = begin; cursor != end; ++cursor) {
         std::putc(*cursor, f);
     }
+}
+
+template <typename F>
+void btrio::print_format() {
+    btrio::printf("radix = %_, decimals = %_, minw = %_, maxw = %_, fill = '%_'\n"
+                  , F::get_radix()
+                  , F::get_decimals()
+                  , F::get_minw()
+                  , F::get_maxw()
+                  , F::get_fill()
+                  );
+}
+
+FORMAT_TEMPLATE
+void btrio::print_format(btrio::static_format<FORMAT_ARGS>) {
+    btrio::printf("radix = %_, decimals = %_, minw = %_, maxw = %_, fill = '%_'\n"
+                  , _radix
+                  , _decimals
+                  , _minw
+                  , _maxw
+                  , _fill
+                  );
 }
 
 #endif // PRINT_HPP

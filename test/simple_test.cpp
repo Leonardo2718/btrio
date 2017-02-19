@@ -26,6 +26,6 @@ int main() {
 
     btrio::print_format(btrio::df{});
 
-    using f = btrio::df::radix<5>::decc<15>;
+    using f = btrio::df::radix<5>::decimals<15>;
     btrio::print_format<f>();
 }
