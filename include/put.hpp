@@ -33,6 +33,8 @@ static const char char_map[btrio::default_format::max_radix] = {
     'f'
 };
 
+template <typename T> void put(T arg);
+
 template <typename T>
 typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type put(T arg, FILE* f) {
     char buf[20];
@@ -125,6 +127,12 @@ void put(const char* arg, FILE* f) {
     }
 }
 
+void put(const std::string& arg, FILE* f) {
+    for (auto c : arg) {
+        std::putc(c, f);
+    }
+}
+
 void put(const void* arg, FILE* f) {
     char buf[16];
     auto v = reinterpret_cast<std::intptr_t>(arg);
@@ -146,7 +154,19 @@ void put(const void* arg, FILE* f) {
     } while (i);
 }
 
-template <typename T> auto put(T arg) { return put(arg, stdout); }
+void put(const btrio::Side& s, FILE* f) {
+    using S = btrio::Side;
+    switch (s) {
+        case S::Left:
+            put(std::string{"Left"}, f);
+            break;
+        case S::Right:
+            put(std::string{"Right"}, f);
+            break;
+    }
+}
+
+template <typename T> void put(T arg) { put(arg, stdout); }
 
 }
 

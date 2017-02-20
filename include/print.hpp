@@ -80,11 +80,24 @@ void btrio::ifprintf(FILE* f, InputIterator begin, InputIterator end) {
     }
 }
 
+static constexpr auto format_fstring =
+    "Format:\n"
+    "    radix = %_\n"
+    "    decimals = %_\n"
+    "    leading zeros = %_\n"
+    "    pad side = %_\n"
+    "    minw = %_\n"
+    "    maxw = %_\n"
+    "    fill = '%_'\n"
+    ;
+
 template <typename F>
 void btrio::print_format() {
-    btrio::printf("radix = %_, decimals = %_, minw = %_, maxw = %_, fill = '%_'\n"
+    btrio::printf(format_fstring
                   , F::get_radix()
                   , F::get_decimals()
+                  , F::get_leading_zeros()
+                  , F::get_pad_side()
                   , F::get_minw()
                   , F::get_maxw()
                   , F::get_fill()
@@ -93,9 +106,11 @@ void btrio::print_format() {
 
 FORMAT_TEMPLATE
 void btrio::print_format(btrio::static_format<FORMAT_ARGS>) {
-    btrio::printf("radix = %_, decimals = %_, minw = %_, maxw = %_, fill = '%_'\n"
+    btrio::printf(format_fstring
                   , _radix
                   , _decimals
+                  , _leading_zeros
+                  , _pad_side
                   , _minw
                   , _maxw
                   , _fill

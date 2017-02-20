@@ -21,6 +21,8 @@ int main() {
 
     btrio::printf("A string \"%_\"\n", "inside a string");
 
+    btrio::printf("A std::string \"%_\"\n", std::string{"inside a string"});
+
     btrio::printf("A percent at the end of a string %", 2);
     btrio::printf(" ... works!\n");
 
