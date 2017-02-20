@@ -17,11 +17,13 @@ enum class Side {Left, Right};
 #define FORMAT_ARGS \
     _radix, \
     _decimals, \
+    _leading_zeros, \
     _pad_side, \
     _minw, \
     _maxw, \
     _fill
 #define FROMAT_TYPES \
+    unsigned int, \
     unsigned int, \
     unsigned int, \
     btrio::Side, \
@@ -31,6 +33,7 @@ enum class Side {Left, Right};
 #define FORMAT_TARGS \
     unsigned int _radix, \
     unsigned int _decimals, \
+    unsigned int _leading_zeros, \
     btrio::Side _pad_side, \
     unsigned int _minw, \
     unsigned int _maxw, \
@@ -38,6 +41,7 @@ enum class Side {Left, Right};
 #define FORMAT_DEFAULT_TARGS \
     unsigned int _radix = 10, \
     unsigned int _decimals = 3, \
+    unsigned int _leading_zeros = 0, \
     btrio::Side _pad_side = btrio::Side::Left, \
     unsigned int _minw = 0, \
     unsigned int _maxw = -1, \
@@ -66,31 +70,35 @@ struct btrio::static_format {
 
         static constexpr auto get_radix() { return _radix; }
         static constexpr auto get_decimals() { return _decimals; }
+        static constexpr auto get_leading_zeros() { return _leading_zeros; }
         static constexpr auto get_pad_side() { return _pad_side; }
         static constexpr auto get_minw() { return _minw; }
         static constexpr auto get_maxw() { return _maxw; }
         static constexpr auto get_fill() { return _fill; }
 
         template <unsigned int r>
-        using radix = static_format<r, _decimals, _pad_side, _minw, _maxw, _fill>;
+        using radix = static_format<r, _decimals, _leading_zeros, _pad_side, _minw, _maxw, _fill>;
 
         template <unsigned int d>
-        using decimals = static_format<_radix, d, _pad_side, _minw, _maxw, _fill>;
+        using decimals = static_format<_radix, d, _leading_zeros, _pad_side, _minw, _maxw, _fill>;
+
+        template <unsigned int z>
+        using leading_zeros = static_format<_radix, _decimals, z, _pad_side, _minw, _maxw, _fill>;
 
         template <btrio::Side s>
-        using pad_side = static_format<_radix, _decimals, s, _minw, _maxw, _fill>;
+        using pad_side = static_format<_radix, _decimals, _leading_zeros, s, _minw, _maxw, _fill>;
 
         template <unsigned int w>
-        using minw = static_format<_radix, _decimals, _pad_side, w, _maxw, _fill>;
+        using minw = static_format<_radix, _decimals, _leading_zeros, _pad_side, w, _maxw, _fill>;
 
         template <unsigned int w>
-        using maxw = static_format<_radix, _decimals, _pad_side, _minw, w, _fill>;
+        using maxw = static_format<_radix, _decimals, _leading_zeros, _pad_side, _minw, w, _fill>;
 
         template <unsigned int w>
-        using setw = static_format<_radix, _decimals, _pad_side, w, w, _fill>;
+        using setw = static_format<_radix, _decimals, _leading_zeros, _pad_side, w, w, _fill>;
 
         template <char c>
-        using fill = static_format<_radix, _decimals, _pad_side, _minw, _maxw, c>;
+        using fill = static_format<_radix, _decimals, _leading_zeros, _pad_side, _minw, _maxw, c>;
 
         using _this = static_format<FORMAT_ARGS>;
 
