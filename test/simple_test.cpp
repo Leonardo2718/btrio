@@ -11,6 +11,8 @@
 #include "btrio.hpp"
 
 int main() {
+    using df = btrio::default_format;
+
     btrio::printf("Hello World!\n");
 
     btrio::printf("Too few arguments: %_ %_\n", -10);
@@ -24,12 +26,14 @@ int main() {
 
     btrio::printf("%_ is a pointer\n", reinterpret_cast<void*>(0xabcd));
 
-    btrio::print_format(btrio::df{});
+    btrio::print_format(df{});
 
-    using f = btrio::df::radix<5>::decimals<15>;
+    using f = df::radix<5>::decimals<15>;
     btrio::print_format<f>();
 
-    auto fval = btrio::df::radix<8>::maxw<12>::format(1);
+    auto fval = df::radix<8>::maxw<12>::format(1);
     btrio::printf("%_\n", fval.value);
     btrio::print_format<decltype(fval)::format>();
+
+    btrio::printf("A formated number [%_]\n", df::minw<5>::radix<16>::format(255));
 }

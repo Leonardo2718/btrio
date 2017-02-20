@@ -22,7 +22,7 @@ namespace btrio {
 
 FORMAT_DEFAULT_TEMPLATE struct static_format;
 
-using df = static_format<>;
+using default_format = static_format<>;
 
 template <typename F, typename T> struct formatted_value;
 
@@ -34,6 +34,7 @@ struct btrio::static_format {
         static constexpr unsigned int max_radix = 16;
 
         static_assert(min_radix <= _radix && _radix <= max_radix, "Radix is outside the supported range [2,16].");
+        static_assert(_minw <= _maxw, "Minimum printing margine is greater than the set maximum");
 
         static constexpr auto get_radix() { return _radix; }
         static constexpr auto get_decimals() { return _decimals; }

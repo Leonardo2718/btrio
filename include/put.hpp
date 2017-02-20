@@ -14,7 +14,7 @@
 
 namespace btrio {
 
-static const char char_map[btrio::df::max_radix] = {
+static const char char_map[btrio::default_format::max_radix] = {
     '0',
     '1',
     '2',
@@ -38,7 +38,10 @@ typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>:
     char buf[20];
 
     bool neg = arg < 0;
-    if (neg) arg = -arg;
+    if (neg) {
+        std::putc('-', f);
+        arg = -arg;
+    }
 
     int i = 0;
     do {
@@ -48,14 +51,50 @@ typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>:
         ++i;
     } while (arg && i < sizeof(buf));
 
-    if (neg) {
+    do {
+        --i;
+        std::putc(buf[i], f);
+    } while (i);
+}
+
+template <typename F, typename T>
+typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type
+put(btrio::formatted_value<F, T> arg, FILE* f) {
+    constexpr auto radix = F::get_radix();
+    auto minw = F::get_minw();
+    auto maxw = F::get_maxw();
+    char buf[80];
+    auto val = arg.value;
+
+    if (maxw == 0) return;
+
+    if (val < 0) {
         std::putc('-', f);
+        --maxw;
+        --minw;
+        val = -val;
     }
+
+    int i = 0;
+    do {
+        if (maxw == 0) return;
+        --maxw;
+        if (minw != 0) --minw;
+        auto d = val % radix;
+        buf[i] = char_map[d];
+        val /= radix;
+        ++i;
+    } while (val && i < sizeof(buf));
 
     do {
         --i;
         std::putc(buf[i], f);
     } while (i);
+
+    while (minw) {
+        std::putc(F::get_fill(), f);
+        --minw;
+    }
 }
 
 template <typename T>
