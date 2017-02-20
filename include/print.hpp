@@ -84,7 +84,7 @@ static constexpr auto format_fstring =
     "Format:\n"
     "    radix = %_\n"
     "    decimals = %_\n"
-    "    leading zeros = %_\n"
+    "    padding zeros = %_\n"
     "    pad side = %_\n"
     "    minw = %_\n"
     "    maxw = %_\n"
@@ -96,7 +96,7 @@ void btrio::print_format() {
     btrio::printf(format_fstring
                   , F::get_radix()
                   , F::get_decimals()
-                  , F::get_leading_zeros()
+                  , F::get_padding_zeros()
                   , F::get_pad_side()
                   , F::get_minw()
                   , F::get_maxw()
@@ -109,7 +109,7 @@ void btrio::print_format(btrio::static_format<FORMAT_ARGS>) {
     btrio::printf(format_fstring
                   , _radix
                   , _decimals
-                  , _leading_zeros
+                  , _padding_zeros
                   , _pad_side
                   , _minw
                   , _maxw

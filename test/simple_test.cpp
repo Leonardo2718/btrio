@@ -12,6 +12,7 @@
 
 int main() {
     using df = btrio::default_format;
+    using Side = btrio::Side;
 
     btrio::printf("Hello World!\n");
 
@@ -30,12 +31,26 @@ int main() {
 
     btrio::print_format(df{});
 
-    using f = df::radix<5>::decimals<15>;
-    btrio::print_format<f>();
-
     auto fval = df::radix<8>::maxw<12>::format(1);
-    btrio::printf("%_\n", fval.value);
+    btrio::printf("value = %_\n", fval.value);
     btrio::print_format<decltype(fval)::format>();
 
     btrio::printf("A formated number [%_]\n", df::minw<5>::radix<16>::format(255));
+    btrio::printf("A formated number [%_]\n", df::minw<5>::radix<16>::format(-255));
+    btrio::printf("A formated number [%_]\n", df::minw<5>::radix<16>::fill<'#'>::format(255));
+    btrio::printf("A formated number [%_]\n", df::minw<5>::radix<16>::fill<'#'>::format(-255));
+
+    btrio::printf("A formated number [%_]\n", df::minw<5>::pad_side<Side::Right>::radix<16>::format(255));
+    btrio::printf("A formated number [%_]\n", df::minw<5>::pad_side<Side::Right>::radix<16>::format(-255));
+
+    btrio::printf("A formated number [%_]\n", df::minw<5>::pad_side<Side::Right>::fill<'#'>::radix<16>::format(255));
+    btrio::printf("A formated number [%_]\n", df::minw<5>::pad_side<Side::Right>::fill<'#'>::radix<16>::format(-255));
+
+    for (int i = 0; i < 16; i++) {
+        btrio::printf("%_ ", df::radix<4>::padding_zeros<3>::pad_side<Side::Right>::format(i));
+    }
+    btrio::printf("\n");
+
+    btrio::printf("Another formatted number [%_]\n", df::setw<6>::fill<'#'>::padding_zeros<2>::format(-1));
+    btrio::printf("Another formatted number [%_]\n", df::setw<6>::fill<'#'>::padding_zeros<2>::pad_side<Side::Right>::format(-1));
 }

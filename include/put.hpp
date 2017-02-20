@@ -60,42 +60,108 @@ typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>:
 }
 
 template <typename F, typename T>
-typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type
-put(btrio::formatted_value<F, T> arg, FILE* f) {
+typename std::enable_if<
+    std::is_integral<T>::value &&
+    std::is_signed<T>::value &&
+    F::get_pad_side() == btrio::Side::Right >
+::type put(btrio::formatted_value<F, T> arg, FILE* f) {
     constexpr auto radix = F::get_radix();
     auto minw = F::get_minw();
     auto maxw = F::get_maxw();
     char buf[80];
     auto val = arg.value;
 
-    if (maxw == 0) return;
-
-    if (val < 0) {
+    // print `-` if value is negative
+    if (val < 0 && maxw > 0) {
         std::putc('-', f);
-        --maxw;
-        --minw;
         val = -val;
+        if (minw != 0) --minw;
+        --maxw;
     }
 
+    // buffer stringified value LSD first
     int i = 0;
-    do {
-        if (maxw == 0) return;
-        --maxw;
-        if (minw != 0) --minw;
+    while (i < sizeof(buf)) {
         auto d = val % radix;
         buf[i] = char_map[d];
         val /= radix;
         ++i;
-    } while (val && i < sizeof(buf));
+        if (val == 0) break;
+    }
 
-    do {
+    // print leading zeros for padding
+    for (auto count = i; count <= F::get_padding_zeros() && maxw > 0; ++count) {
+        std::putc('0', f);
+        if (minw != 0) --minw;
+        --maxw;
+    }
+
+    // print buffered  value
+    while (i > 0 && maxw > 0) {
         --i;
         std::putc(buf[i], f);
-    } while (i);
+        if (minw != 0) --minw;
+        --maxw;
+    }
 
-    while (minw) {
+    // print padding
+    for (minw; minw > 0; --minw) {
+        // note that minw <= maxw must be true
         std::putc(F::get_fill(), f);
-        --minw;
+    }
+}
+
+template <typename F, typename T>
+typename std::enable_if<
+    std::is_integral<T>::value &&
+    std::is_signed<T>::value &&
+    F::get_pad_side() == btrio::Side::Left >
+::type put(btrio::formatted_value<F, T> arg, FILE* f) {
+    constexpr auto radix = F::get_radix();
+    auto minw = F::get_minw();
+    auto maxw = F::get_maxw();
+    char buf[80];
+    auto val = arg.value;
+
+    // save whether value is negative
+    auto neg = val < 0;
+    if (neg) {
+        val = -val;
+    }
+
+    // buffer stringified value LSD first
+    int i = 0;
+    while (i < sizeof(buf)) {
+        auto d = val % radix;
+        buf[i] = char_map[d];
+        val /= radix;
+        ++i;
+        if (val == 0) break;
+    }
+
+    // buffer leading zeros for padding
+    for (i; i <= F::get_padding_zeros() && i < sizeof(buf); ++i) {
+        buf[i] = '0';
+    }
+
+    // buffer minus sign
+    if (neg) {
+        buf[i] = '-';
+        ++i;
+    }
+
+    // print padding
+    for (minw; minw > i; --minw) {
+        // note that minw <= maxw must be true
+        std::putc(F::get_fill(), f);
+        --maxw;
+    }
+
+    // print buffered value
+    while (i > 0 && maxw > 0) {
+        --i;
+        std::putc(buf[i], f);
+        --maxw;
     }
 }
 
