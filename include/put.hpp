@@ -35,7 +35,7 @@ static const char char_map[btrio::default_format::max_radix] = {
 
 template <unsigned int radix, typename OutputIterator, typename T>
 OutputIterator itoa_lsdfirst(OutputIterator begin, OutputIterator end, T arg) {
-    static_assert( btrio::static_format::min_radix <= radix && radix <= btrio::static_format::max_radix,
+    static_assert( btrio::default_format::min_radix <= radix && radix <= btrio::default_format::max_radix,
                    "Radix is outside the supported range [2,16].");
     static_assert( std::is_integral<T>::value,
                    "Can only cal"
@@ -67,7 +67,7 @@ typename std::enable_if<
     constexpr auto radix = F::get_radix();
     auto minw = F::get_minw();
     auto maxw = F::get_maxw();
-    char buf[80];
+    char buf[80] = {0};
     auto val = arg.value;
     auto cursor = begin;
 
@@ -82,14 +82,7 @@ typename std::enable_if<
     }
 
     // buffer stringified value LSD first
-    int i = 0;
-    while (i < sizeof(buf)) {
-        auto d = val % radix;
-        buf[i] = char_map[d];
-        val /= radix;
-        ++i;
-        if (val == 0) break;
-    }
+    auto i = btrio::itoa_lsdfirst<radix>(std::begin(buf), std::end(buf), val) - std::cbegin(buf);
 
     // print leading zeros for padding
     for (auto count = i; count <= F::get_padding_zeros() && maxw > 0; ++count) {
@@ -142,14 +135,7 @@ typename std::enable_if<
     }
 
     // buffer stringified value LSD first
-    int i = 0;
-    while (i < sizeof(buf)) {
-        auto d = val % radix;
-        buf[i] = char_map[d];
-        val /= radix;
-        ++i;
-        if (val == 0) break;
-    }
+    auto i = btrio::itoa_lsdfirst<radix>(std::begin(buf), std::end(buf), val) - std::cbegin(buf);
 
     // buffer leading zeros for padding
     for (i; i <= F::get_padding_zeros() && i < sizeof(buf); ++i) {
@@ -205,14 +191,7 @@ typename std::enable_if<
     }
 
     // buffer stringified value LSD first
-    int i = 0;
-    while (i < sizeof(buf)) {
-        auto d = val % radix;
-        buf[i] = char_map[d];
-        val /= radix;
-        ++i;
-        if (val == 0) break;
-    }
+    auto i = btrio::itoa_lsdfirst<radix>(std::begin(buf), std::end(buf), val) - std::cbegin(buf);
 
     // print leading zeros for padding
     for (auto count = i; count <= F::get_padding_zeros() && maxw > 0; ++count) {
@@ -255,14 +234,7 @@ typename std::enable_if<
     }
 
     // buffer stringified value LSD first
-    int i = 0;
-    while (i < sizeof(buf)) {
-        auto d = val % radix;
-        buf[i] = char_map[d];
-        val /= radix;
-        ++i;
-        if (val == 0) break;
-    }
+    auto i = btrio::itoa_lsdfirst<radix>(std::begin(buf), std::end(buf), val) - std::cbegin(buf);
 
     // buffer leading zeros for padding
     for (i; i <= F::get_padding_zeros() && i < sizeof(buf); ++i) {
