@@ -11,20 +11,23 @@
 #include "format.hpp"
 #include "put.hpp"
 
-#include <cstdio>
-#include <utility>
-
 namespace btrio {
 
+template <typename OutputIterator, typename InputIterator, typename T, typename... Ts>
+void iiprintf(OutputIterator obegin, OutputIterator oend, InputIterator ibegin, InputIterator iend, T arg, Ts... args);
+
+template <typename OutputIterator, typename InputIterator>
+void iiprintf(OutputIterator obegin, OutputIterator oend, InputIterator begin, InputIterator end);
+
 template <typename InputIterator, typename T, typename... Ts>
-void ifprintf(FILE* f, InputIterator begin, InputIterator end, T arg, Ts... args);
+void fiprintf(FILE* f, InputIterator begin, InputIterator end, T arg, Ts... args);
 
 template <typename InputIterator>
-void ifprintf(FILE* f, InputIterator begin, InputIterator end);
+void fiprintf(FILE* f, InputIterator begin, InputIterator end);
 
 template <typename InputIterator, typename... Ts>
 void iprintf(InputIterator begin, InputIterator end, Ts... args) {
-    ifprintf(stdout, begin, end, args...);
+    fiprintf(stdout, begin, end, args...);
 }
 
 template <typename InputRange, typename... Ts>
@@ -43,29 +46,73 @@ FORMAT_TEMPLATE void print_format(btrio::static_format<FORMAT_ARGS>);
 
 }
 
+//~ iiprintf ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+template <typename OutputIterator, typename InputIterator, typename T, typename... Ts>
+void btrio::iiprintf(OutputIterator obegin, OutputIterator oend, InputIterator ibegin, InputIterator iend, T arg, Ts... args) {
+    auto icursor = ibegin;
+    auto ocursor = obegin;
+
+    while (icursor != iend && ocursor != oend) {
+        if (*icursor == '%') {
+            ++icursor;
+            if (icursor == iend) {
+                *ocursor = '%';
+                break;
+            }
+            else if (*icursor == '_') {
+                ocursor = iput(ocursor, oend, arg);
+                ++icursor;
+                break;
+            }
+            else {
+                *ocursor = '%';
+                ++ocursor;
+                *ocursor = *icursor;
+            }
+        }
+        else {
+            *ocursor = *icursor;
+        }
+        ++icursor;
+        ++ocursor;
+    }
+
+    iiprintf(ocursor, oend, icursor, iend, args...);
+}
+
+template <typename OutputIterator, typename InputIterator>
+void btrio::iiprintf(OutputIterator obegin, OutputIterator oend, InputIterator ibegin, InputIterator iend) {
+    for (auto ocursor = obegin, icursor = ibegin; ocursor != oend && icursor != iend; ++ocursor, ++icursor) {
+        *ocursor = *icursor;
+    }
+}
+
+//~ ifprintf ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 template <typename InputIterator, typename T, typename... Ts>
-void btrio::ifprintf(FILE* f, InputIterator begin, InputIterator end, T arg, Ts... args) {
+void btrio::fiprintf(FILE* f, InputIterator begin, InputIterator end, T arg, Ts... args) {
     auto cursor = begin;
 
     while (cursor != end) {
         if (*cursor == '%') {
             ++cursor;
             if (cursor == end) {
-                std::putc('%', f);
+                fput('%', f);
                 break;
             }
             else if (*cursor == '_') {
-                put(arg, f);
+                fput(arg, f);
                 ++cursor;
                 break;
             }
             else {
-                std::putc('%', f);
-                std::putc(*cursor, f);
+                fput('%', f);
+                fput(*cursor, f);
             }
         }
         else {
-            std::putc(*cursor, f);
+            fput(*cursor, f);
         }
         ++cursor;
     }
@@ -74,11 +121,13 @@ void btrio::ifprintf(FILE* f, InputIterator begin, InputIterator end, T arg, Ts.
 }
 
 template <typename InputIterator>
-void btrio::ifprintf(FILE* f, InputIterator begin, InputIterator end) {
+void btrio::fiprintf(FILE* f, InputIterator begin, InputIterator end) {
     for (auto cursor = begin; cursor != end; ++cursor) {
-        std::putc(*cursor, f);
+        fput(*cursor, f);
     }
 }
+
+//~ printf ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 static constexpr auto format_fstring =
     "Format:\n"
